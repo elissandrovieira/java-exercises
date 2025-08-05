@@ -1,17 +1,17 @@
 package com.phonebook.model;
 
 public class Contact {
-	private String name;
-	private int phoneNumber;
+	private final String name;
+	private final long phoneNumber;
 	private String email;
 
-	public Contact(String name, int phoneNumber, String email) {
+	public Contact(String name, long phoneNumber, String email) {
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
 	}
 
-	public Contact(String name, int phoneNumber) {
+	public Contact(String name, long phoneNumber) {
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 	}
@@ -20,7 +20,7 @@ public class Contact {
 		return name;
 	}
 
-	public int getPhoneNumber() {
+	public long getPhoneNumber() {
 		return phoneNumber;
 	}
 

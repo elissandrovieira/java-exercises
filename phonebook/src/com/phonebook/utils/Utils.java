@@ -1,24 +1,24 @@
 package com.phonebook.utils;
 
 public class Utils {
-	public final static void clearConsole()
-	{
-    		try
-    		{
-        		final String os = System.getProperty("os.name");
-        
-        		if (os.contains("Windows"))
-        		{
-            			Runtime.getRuntime().exec("cls");
-        		}
+	public static void clearConsole() {
+    		try {
+        		if (System.getProperty("os.name").contains("Windows"))
+					new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         		else
-        		{
-            			Runtime.getRuntime().exec("clear");
-        		}
+					new ProcessBuilder("clear").inheritIO().start().waitFor();
     		}
     		catch (final Exception e)
     		{
         		System.out.println("Error, couldn't clear the screen: " + e.getMessage());
     		}
+	}
+
+	public static void Delay() {
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
