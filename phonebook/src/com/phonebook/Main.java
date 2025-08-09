@@ -1,14 +1,18 @@
 package com.phonebook;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+
+import com.phonebook.service.ContactService;
 import com.phonebook.utils.Utils;
 import com.phonebook.model.Contact;
 import com.phonebook.utils.Validation;
 
 public class Main {
 	public static void main(String[] args) {
-        boolean isOk = false;
 		Scanner scan = new Scanner(System.in);
+        boolean isOk = false;
 		String name = "";
 
 		Utils.clearConsole();
@@ -27,14 +31,14 @@ public class Main {
         }
 
         isOk = false;
-        long number = 0;
+        String number = "";
 
         while (!isOk) {
             System.out.println("--- Phonebook ---");
             System.out.println("Write the phone number:");
             String numberStr = scan.nextLine();
             number = Validation.phoneNumber(numberStr);
-            if (number == -1) {
+            if (number == null) {
 				Utils.clearConsole();
 				System.out.println("Phone number is incorrect \nUse the pattern: (00) 00000-0000");
 				Utils.Delay();
@@ -65,8 +69,21 @@ public class Main {
         }
 
         Contact contact = new Contact(name, number, email);
+        ContactService.setContact(contact);
 
         System.out.println("--- Phonebook ---");
-        System.out.printf("Name: %s\nPhone number: %d\nE-mail: %s%n", contact.getName(), contact.getPhoneNumber(), contact.getEmail());
+        System.out.println("Show contacts?(Y/N)");
+        String answer = scan.nextLine();
+
+        if (answer.equals("Y")) {
+            List<Contact> allContacts = ContactService.getAllContacts();
+            System.out.println(allContacts.get(3));
+            for (Contact item : allContacts) {
+                System.out.printf("Name: %s\n", item.getName());
+                System.out.printf("Number: %s\n", item.getPhoneNumber());
+                if (item.getEmail() != null || !(item.getEmail().isEmpty()))
+                   System.out.printf("Name: %s\n\n\n", item.getEmail());
+            }
+        }
     }
 }

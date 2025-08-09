@@ -1,5 +1,8 @@
 package com.phonebook.utils;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Utils {
 	public static void clearConsole() {
     		try {
@@ -18,7 +21,7 @@ public class Utils {
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, "An error interrupted the thread", e);
 		}
 	}
 }
