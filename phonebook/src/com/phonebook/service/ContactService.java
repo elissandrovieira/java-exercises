@@ -19,7 +19,7 @@ public class ContactService {
         String number = contact.getPhoneNumber();
         String email = (contact.getEmail() == null) ? "" : contact.getEmail();
 
-        CsvUtils.WriteCsv(String.format("%s,%s,%s", name, number, email), path);
+        CsvUtils.WriteCsv(String.format("%s,%s,%s", name, number, email), path, true);
     }
 
     public static List<Contact> getAllContacts() {
@@ -58,5 +58,68 @@ public class ContactService {
         }
 
         return filteredContacts;
+    }
+
+    public static void UpdateContact(Contact contact, InfoType type) {
+        List<Contact> contacts = getAllContacts();
+
+        int i = 0;
+        for (Contact item : contacts) {
+            switch (type) {
+                case InfoType.NAME:
+                    if (item.getPhoneNumber().equalsIgnoreCase(contact.getPhoneNumber())
+                    && item.getEmail().equalsIgnoreCase(item.getEmail()))
+                        item.setName(contact.getName());
+                    break;
+
+                case InfoType.NUMBER:
+                    if (item.getName().equalsIgnoreCase(contact.getName())
+                            && item.getEmail().equalsIgnoreCase(item.getEmail()))
+                        item.setPhoneNumber(contact.getPhoneNumber());
+                    break;
+
+                case InfoType.EMAIL:
+                    if (item.getPhoneNumber().equalsIgnoreCase(contact.getPhoneNumber())
+                            && item.getName().equalsIgnoreCase(item.getName()))
+                        item.setEmail(contact.getEmail());
+                    break;
+            }
+
+            boolean append = i != 0;
+
+            CsvUtils.WriteCsv(
+                    String.format(
+                            "%s,%s,%s",
+                            item.getName(),
+                            item.getPhoneNumber(),
+                            item.getEmail()
+                    ),
+                    path, append);
+            i++;
+        }
+
+    }
+
+    public static void DeleteContact(Contact contact) {
+        List<Contact> contacts = getAllContacts();
+
+        int i = 0;
+       for (Contact item :contacts) {
+           if (!item.getName().equalsIgnoreCase(contact.getName())
+                   && !item.getPhoneNumber().equalsIgnoreCase(contact.getPhoneNumber())
+                   && !item.getEmail().equalsIgnoreCase(contact.getEmail())
+           ) {
+               boolean append = i != 0;
+               CsvUtils.WriteCsv(
+                       String.format(
+                               "%s,%s,%s",
+                               item.getName(),
+                               item.getPhoneNumber(),
+                               item.getEmail()
+                       ),
+                       path, append);
+           }
+           i++;
+       }
     }
 }

@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 
 public class CsvUtils {
 
-    public static void WriteCsv(String str, String path) {
-        try (BufferedWriter buffer = new BufferedWriter(new FileWriter(path, true))) {
+    public static void WriteCsv(String str, String path, boolean append) {
+        try (BufferedWriter buffer = new BufferedWriter(new FileWriter(path, append))) {
             buffer.write(str);
             buffer.newLine();
         } catch (IOException e) {

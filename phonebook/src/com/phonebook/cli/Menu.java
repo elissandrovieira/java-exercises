@@ -45,83 +45,6 @@ public class Menu {
         }
     }
 
-    private static void AllContacts(String title, List<Contact> contacts) {
-        List<String> contactNames = new ArrayList<>();
-
-        int i = 0;
-        for (Contact contact : contacts)
-            contactNames.add(String.format("%d. %s", ++i, contact.getName()));
-        contactNames.add("0. Back to Main Menu");
-
-        while (true) {
-            Utils.clearConsole();
-            PrintUtils.PrintBox(title, contactNames, sizeLine);
-            int input = Integer.parseInt(scan.nextLine());
-            if (input == 0)
-                break;
-            else if (input <= i) {
-                ContactDetails(contacts.get(input - 1));
-            } else
-                InvalidOption(null, null);
-        }
-    }
-
-    private static void SearchContact(String title) {
-        boolean exitSearch = false;
-
-        while (!exitSearch) {
-            Utils.clearConsole();
-            PrintUtils.PrintBox("Search Contact", List.of(
-                    "Search by:",
-                    " ",
-                    "1. Name",
-                    "2. Phone Number",
-                    "3. Email",
-                    "0. Back to Main Menu"
-            ), sizeLine);
-            String input = scan.nextLine();
-            String info = null;
-
-            List<Contact> contacts = new ArrayList<>();
-            switch (input) {
-                case "1":
-                    Utils.clearConsole();
-                    PrintUtils.PrintBox(title, List.of("Type here:"), sizeLine);
-                    info = scan.nextLine();
-                    contacts = ContactService.getContacts(info, ContactService.InfoType.NAME);
-                    break;
-
-                case "2":
-                    Utils.clearConsole();
-                    PrintUtils.PrintBox(title, List.of("Type here:"), sizeLine);
-                    info = scan.nextLine();
-                    contacts = ContactService.getContacts(info, ContactService.InfoType.NUMBER);
-                    break;
-
-                case "3":
-                    Utils.clearConsole();
-                    PrintUtils.PrintBox(title, List.of("Type here:"), sizeLine);
-                    info = scan.nextLine();
-                    contacts = ContactService.getContacts(info, ContactService.InfoType.EMAIL);
-                    break;
-
-                case "0":
-                    exitSearch = true;
-                    break;
-
-                default:
-                    InvalidOption(null, null);
-                    break;
-            }
-            if (contacts.size() > 1)
-                AllContacts("Select contact", contacts);
-            else if (!(contacts.isEmpty()))
-                ContactDetails(contacts.getFirst());
-            else if (!(input.equals("0")))
-                InvalidOption("Invalid contact", List.of("Insert a valid contact"));
-        }
-    }
-
     private static String AddField(String title, List<List<String>> textList, ContactService.InfoType type) {
         boolean fieldIsEntered = false;
         String validField = null;
@@ -163,6 +86,92 @@ public class Menu {
         return validField;
     }
 
+    private static List<Contact> SelectOption(String title, String tagLine) {
+        Utils.clearConsole();
+        PrintUtils.PrintBox(title, List.of(
+               tagLine,
+                " ",
+                "1. Name",
+                "2. Phone Number",
+                "3. Email",
+                "0. Back to Main Menu"
+        ), sizeLine);
+        String input = scan.nextLine();
+        String info = null;
+
+        List<Contact> contacts = new ArrayList<>();
+        switch (input) {
+            case "1":
+                Utils.clearConsole();
+                PrintUtils.PrintBox(title, List.of("Type here:"), sizeLine);
+                info = scan.nextLine();
+                contacts = ContactService.getContacts(info, ContactService.InfoType.NAME);
+                break;
+
+            case "2":
+                Utils.clearConsole();
+                PrintUtils.PrintBox(title, List.of("Type here:"), sizeLine);
+                info = scan.nextLine();
+                contacts = ContactService.getContacts(info, ContactService.InfoType.NUMBER);
+                break;
+
+            case "3":
+                Utils.clearConsole();
+                PrintUtils.PrintBox(title, List.of("Type here:"), sizeLine);
+                info = scan.nextLine();
+                contacts = ContactService.getContacts(info, ContactService.InfoType.EMAIL);
+                break;
+
+            case "0":
+                contacts = null;
+                break;
+
+            default:
+                InvalidOption(null, null);
+                break;
+        }
+
+        return contacts;
+    }
+
+    private static void AllContacts(String title, List<Contact> contacts) {
+        List<String> contactNames = new ArrayList<>();
+
+        int i = 0;
+        for (Contact contact : contacts)
+            contactNames.add(String.format("%d. %s", ++i, contact.getName()));
+        contactNames.add("0. Back to Main Menu");
+
+        while (true) {
+            Utils.clearConsole();
+            PrintUtils.PrintBox(title, contactNames, sizeLine);
+            int input = Integer.parseInt(scan.nextLine());
+            if (input == 0)
+                break;
+            else if (input <= i) {
+                ContactDetails(contacts.get(input - 1));
+            } else
+                InvalidOption(null, null);
+        }
+    }
+
+    private static void SearchContact(String title) {
+        boolean exitSearch = false;
+
+        while (!exitSearch) {
+            List<Contact> contacts = SelectOption(title,  "Search by:");
+
+            if (contacts.size() > 1)
+                AllContacts("Select contact", contacts);
+            else if (!(contacts.isEmpty()))
+                ContactDetails(contacts.getFirst());
+            else if (contacts == null)
+                exitSearch = true;
+            else
+                InvalidOption("Invalid contact", List.of("Insert a valid contact"));
+        }
+    }
+
     private static void AddContact(String title) {
         List<List<String>> nameList = List.of(
                 List.of("Insert the contact Name:", " ", "0. Back to Main Menu"),
@@ -191,8 +200,73 @@ public class Menu {
     }
 
     private static void EditContact(String title) {
+        boolean exitSearch = false;
+
+        List<Contact> contacts = null;
+        ContactService.InfoType type = null;
+        while (!exitSearch) {
+            contacts = SelectOption(title, "Search by");
+
+            exitSearch = true;
+            if (contacts.size() > 1)
+                AllContacts("Select contact", contacts);
+            else if (!(contacts.isEmpty())){
+                Utils.clearConsole();
+                PrintUtils.PrintBox(title, List.of(
+                        "Edit Contact:",
+                        " ",
+                        "1. Name",
+                        "2. Phone Number",
+                        "3. Email",
+                        "0. Back to Main Menu"
+                ), sizeLine);
+                String answer = scan.nextLine();
+
+                String info = null;
+                switch (answer) {
+                    case "1":
+                        type = ContactService.InfoType.NAME;
+                        Utils.clearConsole();
+                        PrintUtils.PrintBox(title, List.of("Type here:"), sizeLine);
+                        info = scan.nextLine();
+                        contacts.getFirst().setName(info);
+                        break;
+
+                    case "2":
+                        type = ContactService.InfoType.NUMBER;
+                        Utils.clearConsole();
+                        PrintUtils.PrintBox(title, List.of("Type here:"), sizeLine);
+                        info = scan.nextLine();
+                        contacts.getFirst().setPhoneNumber(info);
+                        break;
+
+                    case "3":
+                        type = ContactService.InfoType.EMAIL;
+                        Utils.clearConsole();
+                        PrintUtils.PrintBox(title, List.of("Type here:"), sizeLine);
+                        info = scan.nextLine();
+                        contacts.getFirst().setEmail(info);
+                        break;
+
+                    case "0":
+                        contacts = null;
+                        break;
+
+                    default:
+                        InvalidOption(null, null);
+                        break;
+                }
+            } else{
+                InvalidOption("Invalid contact", List.of("Insert a valid contact"));
+                exitSearch = false;
+            }
+        }
+
+        ContactService.UpdateContact(contacts.getFirst(), type);
+
         Utils.clearConsole();
-        System.out.println("Edit contact");
+        PrintUtils.PrintBox(title, List.of("Contact Saved"), sizeLine);
+        Utils.Delay();
     }
 
     private static void DeleteContact() {
