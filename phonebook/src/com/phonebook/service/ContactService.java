@@ -9,6 +9,11 @@ import java.util.List;
 public class ContactService {
     private static final String path = "resources/contacts.csv";
 
+    public enum InfoType {
+        NAME,
+        NUMBER,
+        EMAIL
+    }
     public static void setContact(Contact contact) {
         String name = contact.getName();
         String number = contact.getPhoneNumber();
@@ -18,7 +23,7 @@ public class ContactService {
     }
 
     public static List<Contact> getAllContacts() {
-        List<Contact> contacts= new ArrayList<Contact>();
+        List<Contact> contacts= new ArrayList<>();
 
         for (String item : CsvUtils.ReadCsv(path).split("\n")) {
             Contact contact = new Contact(item.split(","));
@@ -26,5 +31,32 @@ public class ContactService {
         }
 
         return contacts;
+    }
+
+    public static List<Contact> getContacts(String info, InfoType infoType) {
+        List<Contact> contacts = getAllContacts();
+        List<Contact> filteredContacts = new ArrayList<>();
+
+        for (Contact item : contacts) {
+            switch (infoType) {
+                case InfoType.NAME:
+                    if (item.getName().equalsIgnoreCase(info)) {
+                        filteredContacts.add(item);
+                    }
+                    break;
+
+                case InfoType.NUMBER:
+                    if (item.getPhoneNumber().equalsIgnoreCase(info))
+                        filteredContacts.add(item);
+                    break;
+
+                case InfoType.EMAIL:
+                    if (item.getEmail().equalsIgnoreCase(info))
+                        filteredContacts.add(item);
+                    break;
+            }
+        }
+
+        return filteredContacts;
     }
 }

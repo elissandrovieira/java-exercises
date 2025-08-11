@@ -19,7 +19,7 @@ public class Utils {
 
 	public static void Delay() {
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, "An error interrupted the thread", e);
 		}
