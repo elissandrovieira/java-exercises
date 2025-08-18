@@ -269,9 +269,27 @@ public class Menu {
         Utils.Delay();
     }
 
-    private static void DeleteContact() {
-        Utils.clearConsole();
-        System.out.println("Delete contact");
+    private static void DeleteContact(String title) {
+        boolean exitSearch = false;
+
+        List<Contact> contacts = null;
+        ContactService.InfoType type = null;
+        while (!exitSearch) {
+            contacts = SelectOption(title, "Search by");
+
+            exitSearch = true;
+            if (contacts.size() > 1)
+                AllContacts("Select contact", contacts);
+            else if (!(contacts.isEmpty())){
+                ContactService.DeleteContact(contacts.getFirst());
+                Utils.clearConsole();
+                PrintUtils.PrintBox(title, List.of("Contact deleted"), sizeLine);
+                Utils.Delay();
+            } else{
+                InvalidOption("Invalid contact", List.of("Insert a valid contact"));
+                exitSearch = false;
+            }
+        }
     }
 
     public static void MainMenu() {
@@ -308,7 +326,7 @@ public class Menu {
                   break;
 
               case "5":
-                  DeleteContact();
+                  DeleteContact("Delete contact");
                   break;
 
               case "0":
